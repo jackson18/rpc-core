@@ -9,6 +9,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qijiabin.core.client.RpcProxy;
 
+/**
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:37:03
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring-client.xml")
 public class Client {

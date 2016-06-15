@@ -14,10 +14,14 @@ import org.slf4j.LoggerFactory;
 import com.qijiabin.core.common.Constant;
 
 /**
- * 服务注册
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:31:08
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：服务注册
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class ServiceRegistry {
 

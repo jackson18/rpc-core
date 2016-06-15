@@ -28,10 +28,14 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 /**
- * RPC 服务器（用于发布 RPC 服务）
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:32:05
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：RPC 服务器（用于发布 RPC 服务）
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 

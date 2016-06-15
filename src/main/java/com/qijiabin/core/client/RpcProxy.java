@@ -10,10 +10,14 @@ import com.qijiabin.core.common.RpcResponse;
 import com.qijiabin.core.discovery.ServiceDiscovery;
 
 /**
- * RPC 代理（用于创建 RPC 服务代理）
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:35:25
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：RPC 代理（用于创建 RPC 服务代理）
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class RpcProxy {
 

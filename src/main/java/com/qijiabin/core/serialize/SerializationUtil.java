@@ -10,10 +10,14 @@ import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
 /**
- * 序列化工具类（基于 Protostuff 实现）
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:32:46
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：序列化工具类（基于 Protostuff 实现）
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class SerializationUtil {
 

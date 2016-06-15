@@ -15,10 +15,14 @@ import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 
 /**
- * RPC 处理器（用于处理 RPC 请求）
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:32:18
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：RPC 处理器（用于处理 RPC 请求）
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
 

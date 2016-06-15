@@ -8,10 +8,14 @@ import java.util.List;
 import com.qijiabin.core.serialize.SerializationUtil;
 
 /**
- * RPC 解码器
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:32:59
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：RPC 解码器
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 public class RpcDecoder extends ByteToMessageDecoder {
 

@@ -7,10 +7,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * RPC 编码器
- *
- * @author huangyong
- * @since 1.0.0
+ * ========================================================
+ * 日 期：2016年6月15日 上午10:33:40
+ * 作 者：qijiabin
+ * 版 本：1.0.0
+ * 类说明：RPC 编码器
+ * TODO
+ * ========================================================
+ * 修订日期     修订人    描述
  */
 @SuppressWarnings("rawtypes")
 public class RpcEncoder extends MessageToByteEncoder {
