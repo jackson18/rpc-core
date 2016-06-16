@@ -21,6 +21,12 @@
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.7.7</version>
     </dependency>
+    <!-- LOG4J -->
+	<dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.12</version>
+	</dependency>
     <!-- Spring -->
     <dependency>
         <groupId>org.springframework</groupId>
@@ -33,12 +39,17 @@
         <version>3.2.12.RELEASE</version>
         <scope>test</scope>
     </dependency>
-    <!-- Apache Commons Collections -->
+    <!-- Apache Commons -->
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-collections4</artifactId>
         <version>4.0</version>
     </dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	    <version>3.4</version>
+	</dependency>
     <!-- CGLib -->
     <dependency>
         <groupId>cglib</groupId>

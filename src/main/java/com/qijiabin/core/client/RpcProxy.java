@@ -52,8 +52,8 @@ public class RpcProxy {
                     }
 
                     String[] array = serverAddress.split(":");
-                    String host = array[0];
-                    int port = Integer.parseInt(array[1]);
+                    String host = array[2];
+                    int port = Integer.parseInt(array[3]);
 
                     RpcClient client = new RpcClient(host, port);
                     RpcResponse response = client.send(request);

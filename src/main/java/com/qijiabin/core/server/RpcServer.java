@@ -17,6 +17,7 @@ import com.qijiabin.core.common.RpcResponse;
 import com.qijiabin.core.registry.ServiceRegistry;
 import com.qijiabin.core.rpc.RpcDecoder;
 import com.qijiabin.core.rpc.RpcEncoder;
+import com.qijiabin.core.util.LocalNetWorkIpResolve;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -39,19 +40,19 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
-    private String serverAddress;
+    private String serverPort;
+    private String serverVersion;
+    private String serverWeight;
     private ServiceRegistry serviceRegistry;
+    private Map<String, Object> handlerMap = new HashMap<String, Object>();
 
-    private Map<String, Object> handlerMap = new HashMap<>();
-
-    public RpcServer(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    public RpcServer(String serverAddress, ServiceRegistry serviceRegistry) {
-        this.serverAddress = serverAddress;
+    
+    public RpcServer(String serverPort, String serverVersion, String serverWeight, ServiceRegistry serviceRegistry) {
+        this.serverPort = serverPort;
+        this.serverVersion = serverVersion;
+        this.serverWeight = serverWeight;
         this.serviceRegistry = serviceRegistry;
     }
 
@@ -85,15 +86,14 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            String[] array = serverAddress.split(":");
-            String host = array[0];
-            int port = Integer.parseInt(array[1]);
+            String host = LocalNetWorkIpResolve.getServerIp();
+            int port = Integer.parseInt(serverPort);
 
             ChannelFuture future = bootstrap.bind(host, port).sync();
-            LOGGER.debug("server started on port {}", port);
-
+            LOGGER.debug(">>>server started on port {}", port);
+            
             if (serviceRegistry != null) {
-                serviceRegistry.register(serverAddress);
+                serviceRegistry.register(handlerMap, serverVersion, host + ":" + port + ":" + serverWeight);
             }
 
             future.channel().closeFuture().sync();
@@ -102,4 +102,5 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             bossGroup.shutdownGracefully();
         }
     }
+    
 }

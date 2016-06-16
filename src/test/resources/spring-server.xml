@@ -16,7 +16,9 @@
     </bean>
 
     <bean id="rpcServer" class="com.qijiabin.core.server.RpcServer">
-        <constructor-arg name="serverAddress" value="${server.address}"/>
+        <constructor-arg name="serverPort" value="${server.port}"/>
+        <constructor-arg name="serverVersion" value="${server.version}"/>
+        <constructor-arg name="serverWeight" value="${server.weight}"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
     </bean>
 

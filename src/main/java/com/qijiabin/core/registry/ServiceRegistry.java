@@ -1,6 +1,7 @@
 package com.qijiabin.core.registry;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -34,6 +35,15 @@ public class ServiceRegistry {
     public ServiceRegistry(String registryAddress) {
         this.registryAddress = registryAddress;
     }
+    
+    public void register(Map<String, Object> serviceMap, String version, String hostName) {
+    	if (serviceMap != null && serviceMap.size() > 0) {
+    		for (Map.Entry<String, Object> service : serviceMap.entrySet()) {
+    			String node = service.getKey() + ":" + version + ":" + hostName;
+    			register(node);
+			}
+    	}
+    }
 
     public void register(String data) {
         if (data != null) {
@@ -66,7 +76,7 @@ public class ServiceRegistry {
         try {
             byte[] bytes = data.getBytes();
             String path = zk.create(Constant.ZK_DATA_PATH, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            LOGGER.debug("create zookeeper node ({} => {})", path, data);
+            LOGGER.debug(">>>create zookeeper node ({} => {})", path, data);
         } catch (KeeperException | InterruptedException e) {
             LOGGER.error("", e);
         }
