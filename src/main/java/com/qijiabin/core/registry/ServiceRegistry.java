@@ -1,18 +1,13 @@
 package com.qijiabin.core.registry;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
+
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.qijiabin.core.common.Constant;
 
 /**
  * ========================================================
@@ -28,57 +23,55 @@ public class ServiceRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistry.class);
 
-    private CountDownLatch latch = new CountDownLatch(1);
+    //zk客户端
+  	private CuratorFramework zkClient;
 
-    private String registryAddress;
-
-    public ServiceRegistry(String registryAddress) {
-        this.registryAddress = registryAddress;
-    }
-    
+    /**
+     * 服务注册
+     * @param serviceMap
+     * @param version
+     * @param hostName
+     */
     public void register(Map<String, Object> serviceMap, String version, String hostName) {
     	if (serviceMap != null && serviceMap.size() > 0) {
     		for (Map.Entry<String, Object> service : serviceMap.entrySet()) {
-    			String node = service.getKey() + ":" + version + ":" + hostName;
+    			String node = "/" + service.getKey() + "/" + version + "/" + hostName;
+    			LOGGER.info("service register address is : {}", node);
     			register(node);
 			}
     	}
     }
 
+    /**
+     * 服务注册
+     * @param data
+     */
     public void register(String data) {
-        if (data != null) {
-            ZooKeeper zk = connectServer();
-            if (zk != null) {
-                createNode(zk, data);
-            }
-        }
+        if(zkClient.getState() == CuratorFrameworkState.LATENT){
+			zkClient.start();
+		}
+		//临时节点
+		try {
+			zkClient.create()
+				.creatingParentsIfNeeded()
+				.withMode(CreateMode.EPHEMERAL)
+				.forPath(data);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error(">>>register service address to zookeeper exception:{}",e);
+			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error(">>>register service address to zookeeper exception:{}",e);
+			e.printStackTrace();
+		}
     }
 
-    private ZooKeeper connectServer() {
-        ZooKeeper zk = null;
-        try {
-            zk = new ZooKeeper(registryAddress, Constant.ZK_SESSION_TIMEOUT, new Watcher() {
-                @Override
-                public void process(WatchedEvent event) {
-                    if (event.getState() == Event.KeeperState.SyncConnected) {
-                        latch.countDown();
-                    }
-                }
-            });
-            latch.await();
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("", e);
-        }
-        return zk;
-    }
+	public CuratorFramework getZkClient() {
+		return zkClient;
+	}
 
-    private void createNode(ZooKeeper zk, String data) {
-        try {
-            byte[] bytes = data.getBytes();
-            String path = zk.create(Constant.ZK_DATA_PATH, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            LOGGER.debug(">>>create zookeeper node ({} => {})", path, data);
-        } catch (KeeperException | InterruptedException e) {
-            LOGGER.error("", e);
-        }
-    }
+	public void setZkClient(CuratorFramework zkClient) {
+		this.zkClient = zkClient;
+	}
+    
 }
+

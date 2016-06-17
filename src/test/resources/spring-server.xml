@@ -9,16 +9,23 @@
 
     <context:component-scan base-package="com.qijiabin.core"/>
 
-    <context:property-placeholder location="classpath:rpc.properties"/>
+    <!-- zookeeper -->
+	<bean id="zookeeper" class="com.qijiabin.core.registry.ZookeeperFactory" destroy-method="close">
+		<property name="zkHosts" value="192.168.1.66:2181" />
+		<property name="namespace" value="com.qijiabin.hello" />
+		<property name="connectionTimeout" value="3000" />
+		<property name="sessionTimeout" value="3000" />
+		<property name="singleton" value="true" />
+	</bean>
 
     <bean id="serviceRegistry" class="com.qijiabin.core.registry.ServiceRegistry">
-        <constructor-arg name="registryAddress" value="${registry.address}"/>
+        <property name="zkClient" ref="zookeeper"/>
     </bean>
 
     <bean id="rpcServer" class="com.qijiabin.core.server.RpcServer">
-        <constructor-arg name="serverPort" value="${server.port}"/>
-        <constructor-arg name="serverVersion" value="${server.version}"/>
-        <constructor-arg name="serverWeight" value="${server.weight}"/>
+        <constructor-arg name="serverPort" value="8000"/>
+        <constructor-arg name="serverVersion" value="0.0.1"/>
+        <constructor-arg name="serverWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
     </bean>
 

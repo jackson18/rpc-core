@@ -7,10 +7,19 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:rpc.properties"/>
+    <!-- zookeeper -->
+	<bean id="zookeeper" class="com.qijiabin.core.registry.ZookeeperFactory" destroy-method="close">
+		<property name="zkHosts" value="192.168.1.66:2181" />
+		<property name="namespace" value="com.qijiabin.hello" />
+		<property name="connectionTimeout" value="3000" />
+		<property name="sessionTimeout" value="3000" />
+		<property name="singleton" value="true" />
+	</bean>
 
-    <bean id="serviceDiscovery" class="com.qijiabin.core.discovery.ServiceDiscovery">
-        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    <bean id="serviceDiscovery" class="com.qijiabin.core.registry.ServiceDiscovery">
+    	<property name="service" value="com.qijiabin.core.HelloService" />
+		<property name="version" value="0.0.1" />
+    	<property name="zkClient" ref="zookeeper"/>
     </bean>
 
     <bean id="rpcProxy" class="com.qijiabin.core.client.RpcProxy">

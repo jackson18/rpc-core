@@ -3,11 +3,15 @@ package com.qijiabin.core.client;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.InetSocketAddress;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.qijiabin.core.common.RpcRequest;
 import com.qijiabin.core.common.RpcResponse;
-import com.qijiabin.core.discovery.ServiceDiscovery;
+import com.qijiabin.core.registry.ServiceDiscovery;
 
 /**
  * ========================================================
@@ -20,18 +24,20 @@ import com.qijiabin.core.discovery.ServiceDiscovery;
  * 修订日期     修订人    描述
  */
 public class RpcProxy {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RpcProxy.class);
 
-    private String serverAddress;
     private ServiceDiscovery serviceDiscovery;
 
-    public RpcProxy(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
+    
     public RpcProxy(ServiceDiscovery serviceDiscovery) {
         this.serviceDiscovery = serviceDiscovery;
     }
 
+    /**
+     * @param interfaceClass
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T> T create(Class<?> interfaceClass) {
         return (T) Proxy.newProxyInstance(
@@ -47,21 +53,25 @@ public class RpcProxy {
                     request.setParameterTypes(method.getParameterTypes());
                     request.setParameters(args);
 
-                    if (serviceDiscovery != null) {
-                        serverAddress = serviceDiscovery.discover();
+                    
+                    if (serviceDiscovery == null) {
+                    	LOGGER.info(">>>serviceDiscovery is null!");
+                    	return null;
+                    } 
+                    
+                    InetSocketAddress address = serviceDiscovery.selector();
+                    
+                    if (address == null) {
+                    	LOGGER.info(">>>address is null!");
+                    	return null;
                     }
-
-                    String[] array = serverAddress.split(":");
-                    String host = array[2];
-                    int port = Integer.parseInt(array[3]);
-
-                    RpcClient client = new RpcClient(host, port);
+                    RpcClient client = new RpcClient(address.getHostName(), address.getPort());
                     RpcResponse response = client.send(request);
-
+                    
                     if (response.isError()) {
-                        throw response.getError();
+                    	throw response.getError();
                     } else {
-                        return response.getResult();
+                    	return response.getResult();
                     }
                 }
             }
