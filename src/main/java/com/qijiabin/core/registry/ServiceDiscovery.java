@@ -116,9 +116,9 @@ public class ServiceDiscovery implements InitializingBean {
 				String path = null;
 				for (ChildData data : children) {
 					path = data.getPath();
-					LOGGER.debug("**************--->get path:{}", path);
+					LOGGER.debug(">>>get path:{}", path);
 					path = path.substring(getServicePath().length()+1);
-					LOGGER.debug("****************--->get serviceAddress:{}", path);
+					LOGGER.debug(">>>get serviceAddress:{}", path);
 					String address = new String(path.getBytes(), "utf-8");
 					current.addAll(transfer(address));
 					trace.add(address);
@@ -161,6 +161,7 @@ public class ServiceDiscovery implements InitializingBean {
 	public synchronized InetSocketAddress selector() {
 		if (inner.isEmpty()) {
 			if (!container.isEmpty()) {
+				Collections.shuffle(container);
 				inner.addAll(container);
 			} else if (!trace.isEmpty()) {
 				synchronized (lock) {
