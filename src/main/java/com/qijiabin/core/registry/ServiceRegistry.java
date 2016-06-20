@@ -1,7 +1,6 @@
 package com.qijiabin.core.registry;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
@@ -32,14 +31,10 @@ public class ServiceRegistry {
      * @param version
      * @param hostName
      */
-    public void register(Map<String, Object> serviceMap, String version, String hostName) {
-    	if (serviceMap != null && serviceMap.size() > 0) {
-    		for (Map.Entry<String, Object> service : serviceMap.entrySet()) {
-    			String node = "/" + service.getKey() + "/" + version + "/" + hostName;
-    			LOGGER.info("service register address is : {}", node);
-    			register(node);
-			}
-    	}
+    public void register(String serviceInterface, String version, String hostName) {
+    	String node = "/" + serviceInterface + "/" + version + "/" + hostName;
+    	LOGGER.info("service register address is : {}", node);
+    	register(node);
     }
 
     /**

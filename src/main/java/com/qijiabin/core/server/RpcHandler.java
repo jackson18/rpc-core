@@ -1,5 +1,7 @@
 package com.qijiabin.core.server;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -28,9 +30,9 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcHandler.class);
 
-    private final Map<String, Object> handlerMap;
+    private final Map<String, List<Object>> handlerMap;
 
-    public RpcHandler(Map<String, Object> handlerMap) {
+    public RpcHandler(Map<String, List<Object>> handlerMap) {
         this.handlerMap = handlerMap;
     }
 
@@ -49,16 +51,14 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private Object handle(RpcRequest request) throws Throwable {
         String className = request.getClassName();
-        Object serviceBean = handlerMap.get(className);
+        List<Object> serviceBeanList = handlerMap.get(className);
+        Collections.shuffle(serviceBeanList);
+        Object serviceBean = serviceBeanList.get(0);
 
         Class<?> serviceClass = serviceBean.getClass();
         String methodName = request.getMethodName();
         Class<?>[] parameterTypes = request.getParameterTypes();
         Object[] parameters = request.getParameters();
-
-        /*Method method = serviceClass.getMethod(methodName, parameterTypes);
-        method.setAccessible(true);
-        return method.invoke(serviceBean, parameters);*/
 
         FastClass serviceFastClass = FastClass.create(serviceClass);
         FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);

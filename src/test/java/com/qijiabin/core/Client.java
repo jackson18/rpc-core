@@ -30,7 +30,7 @@ public class Client {
     @BeforeClass
 	public static void before() {
     	try {
-    		Thread.sleep(2000);
+    		Thread.sleep(5000);
     	} catch (InterruptedException e) {
     		e.printStackTrace();
     	}
