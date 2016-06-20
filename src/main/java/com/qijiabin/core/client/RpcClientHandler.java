@@ -29,9 +29,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
+public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClientHandler.class);
 
     private String host;
     private int port;
@@ -40,7 +40,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
     private final Object obj = new Object();
 
-    public RpcClient(String host, int port) {
+    public RpcClientHandler(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -71,7 +71,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                         channel.pipeline()
                             .addLast(new RpcEncoder(RpcRequest.class))
                             .addLast(new RpcDecoder(RpcResponse.class))
-                            .addLast(RpcClient.this);
+                            .addLast(RpcClientHandler.this);
                     }
                 })
                 .option(ChannelOption.SO_KEEPALIVE, true);

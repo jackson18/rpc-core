@@ -101,7 +101,7 @@ public class RpcServer implements ApplicationContextAware {
 					channel.pipeline()
 					.addLast(new RpcDecoder(RpcRequest.class))
 					.addLast(new RpcEncoder(RpcResponse.class))
-					.addLast(new RpcHandler(handlerMap));
+					.addLast(new RpcServerHandler(handlerMap));
 				}
 			})
 			.option(ChannelOption.SO_BACKLOG, 128)

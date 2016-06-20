@@ -26,13 +26,13 @@ import net.sf.cglib.reflect.FastMethod;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
+public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
 
     private final Map<String, List<Object>> handlerMap;
 
-    public RpcHandler(Map<String, List<Object>> handlerMap) {
+    public RpcServerHandler(Map<String, List<Object>> handlerMap) {
         this.handlerMap = handlerMap;
     }
 

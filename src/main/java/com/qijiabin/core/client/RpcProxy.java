@@ -65,7 +65,7 @@ public class RpcProxy {
                     	LOGGER.info(">>>address is null!");
                     	return null;
                     }
-                    RpcClient client = new RpcClient(address.getHostName(), address.getPort());
+                    RpcClientHandler client = new RpcClientHandler(address.getHostName(), address.getPort());
                     RpcResponse response = client.send(request);
                     
                     if (response.isError()) {
