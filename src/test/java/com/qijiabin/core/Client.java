@@ -1,6 +1,7 @@
 package com.qijiabin.core;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,15 @@ public class Client {
 
     @Autowired
     private RpcProxy rpcProxy;
+    
+    @BeforeClass
+	public static void before() {
+    	try {
+    		Thread.sleep(2000);
+    	} catch (InterruptedException e) {
+    		e.printStackTrace();
+    	}
+	}
 
     @Test
     public void helloTest1() {

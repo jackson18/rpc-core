@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.qijiabin.core.annotation.RpcService;
 import com.qijiabin.core.common.RpcRequest;
 import com.qijiabin.core.common.RpcResponse;
+import com.qijiabin.core.common.ServiceConfig;
 import com.qijiabin.core.registry.ServiceRegistry;
 import com.qijiabin.core.rpc.RpcDecoder;
 import com.qijiabin.core.rpc.RpcEncoder;
@@ -42,17 +43,12 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
-    private String serverPort;
-    private String serverVersion;
-    private String serverWeight;
     private ServiceRegistry serviceRegistry;
     private Map<String, Object> handlerMap = new HashMap<String, Object>();
-
+    private Map<String, ServiceConfig> configMap = new HashMap<String, ServiceConfig>();
     
-    public RpcServer(String serverPort, String serverVersion, String serverWeight, ServiceRegistry serviceRegistry) {
-        this.serverPort = serverPort;
-        this.serverVersion = serverVersion;
-        this.serverWeight = serverWeight;
+    
+    public RpcServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
@@ -60,47 +56,59 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
-            for (Object serviceBean : serviceBeanMap.values()) {
-                String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
-                handlerMap.put(interfaceName, serviceBean);
-            }
+        	for (Map.Entry<String, Object> service : serviceBeanMap.entrySet()) {
+        		RpcService annotation = service.getValue().getClass().getAnnotation(RpcService.class);
+        		String interfaceName = annotation.value().getName();
+        		ServiceConfig serviceConfig = new ServiceConfig(annotation.version(), annotation.port(), annotation.weight());
+        		configMap.put(interfaceName, serviceConfig);
+                handlerMap.put(interfaceName, service.getValue());
+        	}
         }
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel channel) throws Exception {
-                        channel.pipeline()
-                            .addLast(new RpcDecoder(RpcRequest.class))
-                            .addLast(new RpcEncoder(RpcResponse.class))
-                            .addLast(new RpcHandler(handlerMap));
-                    }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
-
-            String host = LocalNetWorkIpResolve.getServerIp();
-            int port = Integer.parseInt(serverPort);
-
-            ChannelFuture future = bootstrap.bind(host, port).sync();
-            LOGGER.debug(">>>server started on port {}", port);
-            
-            if (serviceRegistry != null) {
-                serviceRegistry.register(handlerMap, serverVersion, host + ":" + port + ":" + serverWeight);
-            }
-
-            future.channel().closeFuture().sync();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
+    	for (Map.Entry<String, Object> service : handlerMap.entrySet()) {
+    		EventLoopGroup bossGroup = new NioEventLoopGroup();
+    		EventLoopGroup workerGroup = new NioEventLoopGroup();
+    		try {
+    			ServerBootstrap bootstrap = new ServerBootstrap();
+    			bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+    			.childHandler(new ChannelInitializer<SocketChannel>() {
+    				@Override
+    				public void initChannel(SocketChannel channel) throws Exception {
+    					channel.pipeline()
+    					.addLast(new RpcDecoder(RpcRequest.class))
+    					.addLast(new RpcEncoder(RpcResponse.class))
+    					.addLast(new RpcHandler(handlerMap));
+    				}
+    			})
+    			.option(ChannelOption.SO_BACKLOG, 128)
+    			.childOption(ChannelOption.SO_KEEPALIVE, true);
+    			
+    			String host = LocalNetWorkIpResolve.getServerIp();
+    			ServiceConfig serviceConfig = configMap.get(service.getKey());
+    			if (serviceConfig == null) {
+    				continue;
+    			}
+    			String serviceVersion = serviceConfig.getVersion();
+    			int port = serviceConfig.getPort();
+    			int serviceWeight = serviceConfig.getWeight();
+    			
+    			ChannelFuture future = bootstrap.bind(host, port).sync();
+    			LOGGER.debug(">>>server started on port {}", port);
+    			
+    			// 服务注册
+    			if (serviceRegistry != null) {
+    				serviceRegistry.register(handlerMap, serviceVersion, host + ":" + port + ":" + serviceWeight);
+    			}
+    			
+    			future.channel().closeFuture().sync();
+    		} finally {
+    			workerGroup.shutdownGracefully();
+    			bossGroup.shutdownGracefully();
+    		}
+    	}
     }
     
 }

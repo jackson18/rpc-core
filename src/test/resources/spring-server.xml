@@ -23,9 +23,6 @@
     </bean>
 
     <bean id="rpcServer" class="com.qijiabin.core.server.RpcServer">
-        <constructor-arg name="serverPort" value="8000"/>
-        <constructor-arg name="serverVersion" value="0.0.1"/>
-        <constructor-arg name="serverWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
     </bean>
 
