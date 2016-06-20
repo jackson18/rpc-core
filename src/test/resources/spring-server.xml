@@ -19,11 +19,23 @@
 	</bean>
 
     <bean id="serviceRegistry" class="com.qijiabin.core.registry.ServiceRegistry">
-        <property name="zkClient" ref="zookeeper"/>
+        <constructor-arg name="zkClient" ref="zookeeper"/>
     </bean>
 
     <bean id="rpcServer" class="com.qijiabin.core.server.RpcServer">
+        <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl"/>
+        <constructor-arg name="serviceVersion" value="0.0.1"/>
+        <constructor-arg name="servicePort" value="8000"/>
+        <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
     </bean>
+    <bean id="rpcServer2" class="com.qijiabin.core.server.RpcServer">
+        <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl2"/>
+        <constructor-arg name="serviceVersion" value="0.0.1"/>
+        <constructor-arg name="servicePort" value="8001"/>
+        <constructor-arg name="serviceWeight" value="1"/>
+        <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+    </bean>
+    
 
 </beans>

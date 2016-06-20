@@ -1,7 +1,5 @@
 package com.qijiabin.core;
 
-import com.qijiabin.core.annotation.RpcService;
-
 /**
  * ========================================================
  * 日 期：2016年6月15日 上午10:36:41
@@ -12,7 +10,6 @@ import com.qijiabin.core.annotation.RpcService;
  * ========================================================
  * 修订日期     修订人    描述
  */
-@RpcService(value = HelloService.class, version = "0.0.1", port = 8000, weight = 1)
 public class HelloServiceImpl implements HelloService {
 
     @Override

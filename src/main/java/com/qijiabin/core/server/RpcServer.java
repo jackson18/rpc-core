@@ -1,18 +1,12 @@
 package com.qijiabin.core.server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.InitializingBean;
 
-import com.qijiabin.core.annotation.RpcService;
 import com.qijiabin.core.common.RpcRequest;
 import com.qijiabin.core.common.RpcResponse;
 import com.qijiabin.core.registry.ServiceRegistry;
@@ -39,57 +33,49 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class RpcServer implements ApplicationContextAware {
+public class RpcServer implements  InitializingBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
+	private String service;
+	private String serviceVersion;
+	private String servicePort;
+	private String serviceWeight;
     private ServiceRegistry serviceRegistry;
-    private Map<String, List<Object>> handlerMap = new HashMap<String, List<Object>>();
+    private String serviceInterface;
+    private Map<String, Object> handlerMap = new HashMap<String, Object>();
     
     
-    public RpcServer(ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
-    }
+    public RpcServer(String service, String serviceVersion, String servicePort, String serviceWeight,
+			ServiceRegistry serviceRegistry) {
+		super();
+		this.service = service;
+		this.serviceVersion = serviceVersion;
+		this.servicePort = servicePort;
+		this.serviceWeight = serviceWeight;
+		this.serviceRegistry = serviceRegistry;
+	}
 
-    @Override
-    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-        try {
-			Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
-			if (MapUtils.isNotEmpty(serviceBeanMap)) {
-				for (Map.Entry<String, Object> service : serviceBeanMap.entrySet()) {
-					final RpcService annotation = service.getValue().getClass().getAnnotation(RpcService.class);
-					final String interfaceName = annotation.value().getName();
-					Object serviceBean = service.getValue();
-					
-					if (handlerMap.get(interfaceName) == null) {
-						List<Object> list = new ArrayList<Object>();
-						list.add(serviceBean);
-						handlerMap.put(interfaceName, list);
-					} else {
-						List<Object> list = handlerMap.get(interfaceName);
-						list.add(serviceBean);
-						handlerMap.put(interfaceName, list);
-					}
-					
-					// 创建服务
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								buildService(handlerMap, interfaceName, annotation.version(), annotation.port(), annotation.weight());
-							} catch (Exception e) {
-								e.printStackTrace();
-							};
-						}
-					}).start();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	@Override
+	@SuppressWarnings("rawtypes")
+	public void afterPropertiesSet() throws Exception {
+		Class serviceClass = Class.forName(service);
+		Class[] interfaces = serviceClass.getInterfaces();
+		for (Class clazz : interfaces) {
+			serviceInterface = clazz.getName();
+			handlerMap.put(serviceInterface, serviceClass.newInstance());
+			break;
 		}
-    }
-    
-    private void buildService(final Map<String, List<Object>> handlerMap, String serviceInterface, String serviceVersion, int port, int serviceWeight) throws Exception {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				buildService();
+			}
+		}).start();
+	}
+	
+	private void buildService() {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
@@ -107,21 +93,42 @@ public class RpcServer implements ApplicationContextAware {
 			.option(ChannelOption.SO_BACKLOG, 128)
 			.childOption(ChannelOption.SO_KEEPALIVE, true);
 			
-			String host = LocalNetWorkIpResolve.getServerIp();
-			ChannelFuture future = bootstrap.bind(host, port).sync();
-			LOGGER.debug(">>>server started on port {}", port);
-			
-			// 服务注册
-			if (serviceRegistry != null) {
-				serviceRegistry.register(serviceInterface, serviceVersion, host + ":" + port + ":" + serviceWeight);
+			final String host = LocalNetWorkIpResolve.getServerIp();
+			int port = Integer.parseInt(servicePort);
+			try {
+				final ChannelFuture future = bootstrap.bind(host, port).sync();
+				LOGGER.debug(">>>server started on port {}", servicePort);
+				
+				// 服务注册
+				if (serviceRegistry != null) {
+					serviceRegistry.register(serviceInterface, serviceVersion, host + ":" + servicePort + ":" + serviceWeight);
+				}
+				
+				// 优雅退出
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+		            public void run() {  
+		                try {  
+		                	if(serviceRegistry != null) {
+		                		serviceRegistry.unregister(serviceInterface, serviceVersion, host + ":" + servicePort + ":" + serviceWeight);
+		                		serviceRegistry.close();
+		        			}
+		                	Thread.sleep(1000 * 5);  
+		                	future.cancel(true);
+		                } catch (Exception e) {  
+							e.printStackTrace();
+						}
+		            }
+		        });		
+				
+				future.channel().closeFuture().sync();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			
-			future.channel().closeFuture().sync();
 		} finally {
 			workerGroup.shutdownGracefully();
 			bossGroup.shutdownGracefully();
 		}
-    }
+	}
 
 }
 

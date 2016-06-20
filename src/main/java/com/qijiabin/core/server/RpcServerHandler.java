@@ -1,7 +1,5 @@
 package com.qijiabin.core.server;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -30,9 +28,9 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
 
-    private final Map<String, List<Object>> handlerMap;
+    private final Map<String, Object> handlerMap;
 
-    public RpcServerHandler(Map<String, List<Object>> handlerMap) {
+    public RpcServerHandler(Map<String, Object> handlerMap) {
         this.handlerMap = handlerMap;
     }
 
@@ -51,9 +49,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private Object handle(RpcRequest request) throws Throwable {
         String className = request.getClassName();
-        List<Object> serviceBeanList = handlerMap.get(className);
-        Collections.shuffle(serviceBeanList);
-        Object serviceBean = serviceBeanList.get(0);
+        Object serviceBean = handlerMap.get(className);
 
         Class<?> serviceClass = serviceBean.getClass();
         String methodName = request.getMethodName();
@@ -67,7 +63,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error("server caught exception", cause);
+        LOGGER.error(">>>server caught exception", cause);
         ctx.close();
     }
 }

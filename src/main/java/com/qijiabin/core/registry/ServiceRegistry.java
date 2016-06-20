@@ -1,6 +1,7 @@
 package com.qijiabin.core.registry;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
@@ -24,8 +25,13 @@ public class ServiceRegistry {
 
     //zk客户端
   	private CuratorFramework zkClient;
+  	
+  	
+    public ServiceRegistry(CuratorFramework zkClient) {
+		this.zkClient = zkClient;
+	}
 
-    /**
+	/**
      * 服务注册
      * @param serviceMap
      * @param version
@@ -59,14 +65,36 @@ public class ServiceRegistry {
 			e.printStackTrace();
 		}
     }
-
-	public CuratorFramework getZkClient() {
-		return zkClient;
-	}
-
-	public void setZkClient(CuratorFramework zkClient) {
-		this.zkClient = zkClient;
-	}
     
+    /**
+     * 取消服务注册
+     * @param name
+     * @param version
+     * @param address
+     */
+	public void unregister(String name, String version, String address) {
+		String servicePath = "/"+name + "/" + version +"/"+ address;
+		try {
+			if(zkClient.getState() == CuratorFrameworkState.LATENT) {
+				zkClient.start();
+			}
+			if(zkClient.blockUntilConnected(3000, TimeUnit.MILLISECONDS)) {
+				zkClient.delete().forPath(servicePath);
+				LOGGER.debug(">>>delete path [{}] successful.", servicePath);
+			}
+		} catch (InterruptedException e) {
+			LOGGER.error(">>>CuratorFramework Client interrupted. Exception message [{}].", e.getMessage());
+		} catch (Exception e) {
+			LOGGER.error(">>>delete path[{}] failed. Message:{}.", servicePath, e.getMessage());
+		}
+	}
+	
+	/**
+	 * 关闭服务链接
+	 */
+	public void close(){
+		zkClient.close();
+	}
+
 }
 
