@@ -72,7 +72,7 @@ public class ZookeeperFactory implements FactoryBean<CuratorFramework> {
 		return builder
 				.connectString(connectString)
 				.sessionTimeoutMs(sessionTimeout)
-				.connectionTimeoutMs(30000)
+				.connectionTimeoutMs(connectionTimeout)
 				.canBeReadOnly(true)
 				.namespace(namespace)
 				.retryPolicy(new ExponentialBackoffRetry(1000, Integer.MAX_VALUE))
