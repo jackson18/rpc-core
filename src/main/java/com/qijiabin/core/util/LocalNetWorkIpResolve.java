@@ -25,7 +25,7 @@ public class LocalNetWorkIpResolve {
 	private static final Logger log = LoggerFactory.getLogger(LocalNetWorkIpResolve.class);
 	
 	// ip缓存
-	private  static String serverIp;
+	private static String serverIp;
 	
 	/**
 	 * 获取本地机器ip
@@ -49,7 +49,7 @@ public class LocalNetWorkIpResolve {
 					}
 					if (address.isSiteLocalAddress() && !address.isLoopbackAddress()) {
 						serverIp = address.getHostAddress();
-						log.info("resolve server ip : {}", serverIp);
+						log.info(">>>resolve server ip : {}", serverIp);
 						break;
 					}
 				}

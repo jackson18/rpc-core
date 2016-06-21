@@ -12,7 +12,7 @@
     <!-- zookeeper -->
 	<bean id="zookeeper" class="com.qijiabin.core.registry.ZookeeperFactory" destroy-method="close">
 		<property name="zkHosts" value="192.168.1.66:2181" />
-		<property name="namespace" value="com.qijiabin.hello" />
+		<property name="namespace" value="com.qijiabin" />
 		<property name="connectionTimeout" value="3000" />
 		<property name="sessionTimeout" value="3000" />
 		<property name="singleton" value="true" />
@@ -36,6 +36,12 @@
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
     </bean>
-    
+    <bean id="rpcServer3" class="com.qijiabin.core.server.RpcServer">
+        <constructor-arg name="service" value="com.qijiabin.core.SayServiceImpl"/>
+        <constructor-arg name="serviceVersion" value="0.0.1"/>
+        <constructor-arg name="servicePort" value="8002"/>
+        <constructor-arg name="serviceWeight" value="1"/>
+        <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+    </bean>
 
 </beans>
