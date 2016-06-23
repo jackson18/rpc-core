@@ -1,5 +1,7 @@
 package com.qijiabin.core.common;
 
+import java.io.Serializable;
+
 /**
  * ========================================================
  * 日 期：2016年6月15日 上午10:35:10
@@ -10,7 +12,8 @@ package com.qijiabin.core.common;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class RpcResponse {
+@SuppressWarnings("serial")
+public class RpcResponse implements Serializable {
 
     private String requestId;
     private Throwable error;
