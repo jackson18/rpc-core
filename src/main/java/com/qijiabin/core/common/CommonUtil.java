@@ -1,7 +1,5 @@
 package com.qijiabin.core.common;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.qijiabin.core.serialization.HessianUtil;
 import com.qijiabin.core.serialization.ProtostuffUtil;
 import com.qijiabin.core.serialization.SerializeUtil;
@@ -23,15 +21,10 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static SerializeUtil getSerializeUtil(String serialize) {
-		if (StringUtils.isEmpty(serialize)) {
-			return null;
-		}
-		if ("hessian".equalsIgnoreCase(serialize)) {
-			return new HessianUtil();
-		} else if ("protostuff".equalsIgnoreCase(serialize)) {
+		if ("protostuff".equalsIgnoreCase(serialize)) {
 			return new ProtostuffUtil();
 		}
-		return null;
+		return new HessianUtil();
 	}
 	
 }
