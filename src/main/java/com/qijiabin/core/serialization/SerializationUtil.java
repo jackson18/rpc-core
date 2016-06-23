@@ -1,4 +1,4 @@
-package com.qijiabin.core.serialize;
+package com.qijiabin.core.serialization;
 
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;

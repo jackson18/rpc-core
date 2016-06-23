@@ -1,6 +1,6 @@
 package com.qijiabin.core.rpc;
 
-import com.qijiabin.core.serialize.SerializationUtil;
+import com.qijiabin.core.serialization.SerializationUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

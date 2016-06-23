@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
-import com.qijiabin.core.serialize.SerializationUtil;
+import com.qijiabin.core.serialization.SerializationUtil;
 
 /**
  * ========================================================
