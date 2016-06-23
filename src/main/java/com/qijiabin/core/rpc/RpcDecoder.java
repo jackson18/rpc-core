@@ -2,7 +2,8 @@ package com.qijiabin.core.rpc;
 
 import java.util.List;
 
-import com.qijiabin.core.serialization.SerializationUtil;
+import com.qijiabin.core.common.CommonUtil;
+import com.qijiabin.core.serialization.SerializeUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,9 +22,11 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 public class RpcDecoder extends ByteToMessageDecoder {
 
     private Class<?> genericClass;
+    private String serialize;
 
-    public RpcDecoder(Class<?> genericClass) {
+    public RpcDecoder(Class<?> genericClass, String serialize) {
         this.genericClass = genericClass;
+        this.serialize = serialize;
     }
 
     @Override
@@ -42,7 +45,8 @@ public class RpcDecoder extends ByteToMessageDecoder {
         byte[] data = new byte[dataLength];
         in.readBytes(data);
 
-        Object obj = SerializationUtil.deserialize(data, genericClass);
+        SerializeUtil serializeUtil = CommonUtil.getSerializeUtil(serialize);
+        Object obj = serializeUtil.deserialize(data, genericClass);
         out.add(obj);
     }
 }

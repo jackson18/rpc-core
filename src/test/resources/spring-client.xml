@@ -29,9 +29,11 @@
 
     <bean name="rpcProxy" class="com.qijiabin.core.client.RpcProxy">
         <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
+        <constructor-arg name="serialize" value="hessian"/>
     </bean>
     <bean name="rpcProxy2" class="com.qijiabin.core.client.RpcProxy">
         <constructor-arg name="serviceDiscovery" ref="serviceDiscovery2"/>
+        <constructor-arg name="serialize" value="hessian"/>
     </bean>
 
 </beans>

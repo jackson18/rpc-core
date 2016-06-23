@@ -35,14 +35,15 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
     private String host;
     private int port;
-
+    private String serialize;
     private RpcResponse response;
-
     private final Object obj = new Object();
 
-    public RpcClientHandler(String host, int port) {
+    
+    public RpcClientHandler(String host, int port, String serialize) {
         this.host = host;
         this.port = port;
+        this.serialize = serialize;
     }
 
     @Override
@@ -69,8 +70,8 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
                     @Override
                     public void initChannel(SocketChannel channel) throws Exception {
                         channel.pipeline()
-                            .addLast(new RpcEncoder(RpcRequest.class))
-                            .addLast(new RpcDecoder(RpcResponse.class))
+                            .addLast(new RpcEncoder(RpcRequest.class, serialize))
+                            .addLast(new RpcDecoder(RpcResponse.class, serialize))
                             .addLast(RpcClientHandler.this);
                     }
                 })
@@ -91,4 +92,6 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
             group.shutdownGracefully();
         }
     }
+    
 }
+

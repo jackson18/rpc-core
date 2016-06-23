@@ -1,6 +1,7 @@
 package com.qijiabin.core.rpc;
 
-import com.qijiabin.core.serialization.SerializationUtil;
+import com.qijiabin.core.common.CommonUtil;
+import com.qijiabin.core.serialization.SerializeUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,15 +21,18 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class RpcEncoder extends MessageToByteEncoder {
 
     private Class<?> genericClass;
+    private String serialize;
 
-    public RpcEncoder(Class<?> genericClass) {
+    public RpcEncoder(Class<?> genericClass, String serialize) {
         this.genericClass = genericClass;
+        this.serialize = serialize;
     }
 
     @Override
     public void encode(ChannelHandlerContext ctx, Object in, ByteBuf out) throws Exception {
         if (genericClass.isInstance(in)) {
-            byte[] data = SerializationUtil.serialize(in);
+        	SerializeUtil serializeUtil = CommonUtil.getSerializeUtil(serialize);
+            byte[] data = serializeUtil.serialize(in);
             out.writeInt(data.length);
             out.writeBytes(data);
         }

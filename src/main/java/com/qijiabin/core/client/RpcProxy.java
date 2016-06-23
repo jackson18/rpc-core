@@ -28,10 +28,12 @@ public class RpcProxy {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RpcProxy.class);
 
     private ServiceDiscovery serviceDiscovery;
+    private String serialize;
 
     
-    public RpcProxy(ServiceDiscovery serviceDiscovery) {
+    public RpcProxy(ServiceDiscovery serviceDiscovery, String serialize) {
         this.serviceDiscovery = serviceDiscovery;
+        this.serialize = serialize;
     }
 
     /**
@@ -65,7 +67,7 @@ public class RpcProxy {
                     	LOGGER.info(">>>address is null!");
                     	return null;
                     }
-                    RpcClientHandler client = new RpcClientHandler(address.getHostName(), address.getPort());
+                    RpcClientHandler client = new RpcClientHandler(address.getHostName(), address.getPort(), serialize);
                     RpcResponse response = client.send(request);
                     
                     if (response.isError()) {

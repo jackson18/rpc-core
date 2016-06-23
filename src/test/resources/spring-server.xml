@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.qijiabin.core"/>
-
+    
     <!-- zookeeper -->
 	<bean id="zookeeper" class="com.qijiabin.core.registry.ZookeeperFactory" destroy-method="close">
 		<property name="zkHosts" value="192.168.1.66:2181" />
@@ -28,6 +28,7 @@
         <constructor-arg name="servicePort" value="8000"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+        <constructor-arg name="serialize" value="hessian"/>
     </bean>
     <bean id="rpcServer2" class="com.qijiabin.core.server.RpcServer">
         <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl2"/>
@@ -35,6 +36,7 @@
         <constructor-arg name="servicePort" value="8001"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+        <constructor-arg name="serialize" value="hessian"/>
     </bean>
     <bean id="rpcServer3" class="com.qijiabin.core.server.RpcServer">
         <constructor-arg name="service" value="com.qijiabin.core.SayServiceImpl"/>
@@ -42,6 +44,7 @@
         <constructor-arg name="servicePort" value="8002"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+        <constructor-arg name="serialize" value="hessian"/>
     </bean>
 
 </beans>

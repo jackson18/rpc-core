@@ -1,5 +1,7 @@
 package com.qijiabin.core;
 
+import java.io.Serializable;
+
 /**
  * ========================================================
  * 日 期：2016年6月15日 上午10:36:47
@@ -10,7 +12,8 @@ package com.qijiabin.core;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class Person {
+@SuppressWarnings("serial")
+public class Person implements Serializable {
 
     private String firstName;
     private String lastName;

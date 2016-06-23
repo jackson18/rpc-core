@@ -43,17 +43,19 @@ public class RpcServer implements  InitializingBean {
 	private String serviceWeight;
     private ServiceRegistry serviceRegistry;
     private String serviceInterface;
+    private String serialize;
     private Map<String, Object> handlerMap = new HashMap<String, Object>();
     
     
     public RpcServer(String service, String serviceVersion, String servicePort, String serviceWeight,
-			ServiceRegistry serviceRegistry) {
+			ServiceRegistry serviceRegistry, String serialize) {
 		super();
 		this.service = service;
 		this.serviceVersion = serviceVersion;
 		this.servicePort = servicePort;
 		this.serviceWeight = serviceWeight;
 		this.serviceRegistry = serviceRegistry;
+		this.serialize = serialize;
 	}
 
 	@Override
@@ -85,8 +87,8 @@ public class RpcServer implements  InitializingBean {
 				@Override
 				public void initChannel(SocketChannel channel) throws Exception {
 					channel.pipeline()
-					.addLast(new RpcDecoder(RpcRequest.class))
-					.addLast(new RpcEncoder(RpcResponse.class))
+					.addLast(new RpcDecoder(RpcRequest.class, serialize))
+					.addLast(new RpcEncoder(RpcResponse.class, serialize))
 					.addLast(new RpcServerHandler(handlerMap));
 				}
 			})

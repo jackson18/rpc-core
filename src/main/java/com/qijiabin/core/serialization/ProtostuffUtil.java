@@ -19,14 +19,11 @@ import org.objenesis.ObjenesisStd;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class SerializationUtil {
+public class ProtostuffUtil implements SerializeUtil {
 
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
-
     private static Objenesis objenesis = new ObjenesisStd(true);
-
-    private SerializationUtil() {
-    }
+    
 
     @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> cls) {
@@ -44,7 +41,7 @@ public class SerializationUtil {
      * 序列化（对象 -> 字节数组）
      */
     @SuppressWarnings("unchecked")
-    public static <T> byte[] serialize(T obj) {
+    public <T> byte[] serialize(T obj) {
         Class<T> cls = (Class<T>) obj.getClass();
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         try {
@@ -60,7 +57,7 @@ public class SerializationUtil {
     /**
      * 反序列化（字节数组 -> 对象）
      */
-    public static <T> T deserialize(byte[] data, Class<T> cls) {
+    public <T> T deserialize(byte[] data, Class<T> cls) {
         try {
             T message = (T) objenesis.newInstance(cls);
             Schema<T> schema = getSchema(cls);
