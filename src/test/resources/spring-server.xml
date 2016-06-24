@@ -28,7 +28,7 @@
         <constructor-arg name="servicePort" value="8000"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
-        <constructor-arg name="serialize" value="hessian"/>
+        <constructor-arg name="serialize" value="protostuff"/>
     </bean>
     <bean id="rpcServer2" class="com.qijiabin.core.server.RpcServer">
         <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl2"/>
@@ -36,7 +36,7 @@
         <constructor-arg name="servicePort" value="8001"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
-        <constructor-arg name="serialize" value="hessian"/>
+        <constructor-arg name="serialize" value="protostuff"/>
     </bean>
     <bean id="rpcServer3" class="com.qijiabin.core.server.RpcServer">
         <constructor-arg name="service" value="com.qijiabin.core.SayServiceImpl"/>
@@ -44,7 +44,7 @@
         <constructor-arg name="servicePort" value="8002"/>
         <constructor-arg name="serviceWeight" value="1"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
-        <constructor-arg name="serialize" value="hessian"/>
+        <constructor-arg name="serialize" value="protostuff"/>
     </bean>
 
 </beans>
