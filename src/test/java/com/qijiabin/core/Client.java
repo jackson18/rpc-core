@@ -31,6 +31,7 @@ public class Client {
     
     @Test
     public void helloTest1() {
+    	System.out.println();
     	try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
