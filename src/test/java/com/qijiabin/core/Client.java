@@ -1,8 +1,13 @@
 package com.qijiabin.core;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.qijiabin.core.client.RpcProxy;
 
 /**
  * ========================================================
@@ -14,27 +19,39 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * ========================================================
  * 修订日期     修订人    描述
  */
-@SuppressWarnings("resource")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring-client.xml")
 public class Client {
 
+    @Resource(name="rpcProxy")
+    private RpcProxy rpcProxy;
+    
+    @Resource(name="rpcProxy2")
+    private RpcProxy rpcProxy2;
+    
     @Test
     public void helloTest1() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
     	try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-    	for (int i = 0; i < 100; i++) {
-    		HelloService helloService = (HelloService) context.getBean("helloService");
-    		String result = helloService.hello("World");
-    		System.out.println(result);
-    		
-    		SayService sayService = (SayService) context.getBean("sayService");
-    		String result2 = sayService.say("tom");
-    		System.out.println(result2);
-    	}
+        HelloService helloService = rpcProxy.create(HelloService.class);
+        String result = helloService.hello("World");
+        System.out.println(result);
     }
 
+    @Test
+    public void helloTest2() {
+        HelloService helloService = rpcProxy.create(HelloService.class);
+        String result = helloService.hello(new Person("Yong", "Huang"));
+        System.out.println(result);
+    }
+    
+    @Test
+    public void sayTest() {
+    	SayService sayService = rpcProxy2.create(SayService.class);
+    	String result = sayService.say("tom");
+    	System.out.println(result);
+    }
 }
-
