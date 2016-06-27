@@ -19,6 +19,7 @@ public class Client {
 
     @Test
     public void helloTest1() {
+    	System.out.println();
 		ApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
     	try {
 			Thread.sleep(2000);
