@@ -31,7 +31,7 @@ public class HessianUtil implements SerializeUtil {
 			ho.writeObject(obj);
 			ho.completeMessage();
 		    ho.close();
-		    data =  os.toByteArray();  
+		    data = os.toByteArray();  
 		    os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -63,3 +63,4 @@ public class HessianUtil implements SerializeUtil {
 	}
 
 }
+
