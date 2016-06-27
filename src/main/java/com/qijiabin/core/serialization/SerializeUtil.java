@@ -23,4 +23,3 @@ public interface SerializeUtil {
     public <T> T deserialize(byte[] data, Class<T> cls);
 	
 }
-

@@ -61,4 +61,3 @@ public class RpcRequest implements Serializable {
         this.parameters = parameters;
     }
 }
-

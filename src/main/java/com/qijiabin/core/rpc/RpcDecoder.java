@@ -50,4 +50,3 @@ public class RpcDecoder extends ByteToMessageDecoder {
         out.add(obj);
     }
 }
-

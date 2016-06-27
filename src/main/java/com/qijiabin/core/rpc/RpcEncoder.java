@@ -38,4 +38,3 @@ public class RpcEncoder extends MessageToByteEncoder {
         }
     }
 }
-

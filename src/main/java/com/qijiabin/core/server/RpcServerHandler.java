@@ -67,4 +67,3 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         ctx.close();
     }
 }
-

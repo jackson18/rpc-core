@@ -39,7 +39,7 @@ public class ServiceRegistry {
      */
     public void register(String serviceInterface, String version, String hostName) {
     	String node = "/" + serviceInterface + "/" + version + "/" + hostName;
-    	LOGGER.info(">>>service register address is : {}", node);
+    	LOGGER.info("service register address is : {}", node);
     	register(node);
     }
 
