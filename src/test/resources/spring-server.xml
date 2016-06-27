@@ -22,7 +22,7 @@
         <constructor-arg name="zkClient" ref="zookeeper"/>
     </bean>
 
-    <bean id="rpcServer" class="com.qijiabin.core.server.RpcServer">
+    <bean id="helloService" class="com.qijiabin.core.server.RpcServerFactory">
         <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl"/>
         <constructor-arg name="serviceVersion" value="0.0.1"/>
         <constructor-arg name="servicePort" value="8000"/>
@@ -30,7 +30,7 @@
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
         <constructor-arg name="serialize" value="hessian"/>
     </bean>
-    <bean id="rpcServer2" class="com.qijiabin.core.server.RpcServer">
+    <bean id="helloService2" class="com.qijiabin.core.server.RpcServerFactory">
         <constructor-arg name="service" value="com.qijiabin.core.HelloServiceImpl2"/>
         <constructor-arg name="serviceVersion" value="0.0.1"/>
         <constructor-arg name="servicePort" value="8001"/>
@@ -38,7 +38,7 @@
         <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
         <constructor-arg name="serialize" value="hessian"/>
     </bean>
-    <bean id="rpcServer3" class="com.qijiabin.core.server.RpcServer">
+    <bean id="sayService" class="com.qijiabin.core.server.RpcServerFactory">
         <constructor-arg name="service" value="com.qijiabin.core.SayServiceImpl"/>
         <constructor-arg name="serviceVersion" value="0.0.1"/>
         <constructor-arg name="servicePort" value="8002"/>

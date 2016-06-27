@@ -47,3 +47,4 @@ public class RpcResponse implements Serializable {
         this.result = result;
     }
 }
+

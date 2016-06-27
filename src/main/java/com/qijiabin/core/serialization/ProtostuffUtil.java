@@ -68,3 +68,4 @@ public class ProtostuffUtil implements SerializeUtil {
         }
     }
 }
+

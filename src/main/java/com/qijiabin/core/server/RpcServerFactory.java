@@ -33,9 +33,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * ========================================================
  * 修订日期     修订人    描述
  */
-public class RpcServer implements  InitializingBean {
+public class RpcServerFactory implements  InitializingBean {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerFactory.class);
 
 	private String service;
 	private String serviceVersion;
@@ -47,7 +47,7 @@ public class RpcServer implements  InitializingBean {
     private Map<String, Object> handlerMap = new HashMap<String, Object>();
     
     
-    public RpcServer(String service, String serviceVersion, String servicePort, String serviceWeight,
+    public RpcServerFactory(String service, String serviceVersion, String servicePort, String serviceWeight,
 			ServiceRegistry serviceRegistry, String serialize) {
 		super();
 		this.service = service;

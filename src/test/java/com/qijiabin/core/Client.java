@@ -18,7 +18,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Client {
     
 	@Test
-    public void helloTest1() {
+    public void simpleTest() {
     	ApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
     	try {
 			Thread.sleep(2000);

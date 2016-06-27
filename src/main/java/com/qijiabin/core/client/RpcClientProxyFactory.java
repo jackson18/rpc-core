@@ -41,7 +41,6 @@ public class RpcClientProxyFactory implements InitializingBean, FactoryBean<Obje
         this.serialize = serialize;
     }
 
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		proxyClient = PROXY_FACTORY.getProxy(Class.forName(serviceDiscovery.getService()), new InvocationHandler() {
@@ -78,12 +77,10 @@ public class RpcClientProxyFactory implements InitializingBean, FactoryBean<Obje
         });
 	}
 
-
 	@Override
 	public Object getObject() throws Exception {
 		return proxyClient;
 	}
-
 
 	@Override
 	public Class<?> getObjectType() {
@@ -94,7 +91,6 @@ public class RpcClientProxyFactory implements InitializingBean, FactoryBean<Obje
 		}
 		return null;
 	}
-
 
 	@Override
 	public boolean isSingleton() {
