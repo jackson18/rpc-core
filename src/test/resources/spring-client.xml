@@ -30,10 +30,12 @@
     <bean name="helloService" class="com.qijiabin.core.client.RpcClientProxyFactory">
         <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
         <constructor-arg name="serialize" value="hessian"/>
+        <constructor-arg name="loadbalance" value="activeWeight"/>
     </bean>
     <bean name="sayService" class="com.qijiabin.core.client.RpcClientProxyFactory">
         <constructor-arg name="serviceDiscovery" ref="serviceDiscovery2"/>
         <constructor-arg name="serialize" value="hessian"/>
+        <constructor-arg name="loadbalance" value="random"/>
     </bean>
 
 </beans>

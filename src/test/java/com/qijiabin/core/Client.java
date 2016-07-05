@@ -26,7 +26,7 @@ public class Client {
 			e.printStackTrace();
 		}
     	
-    	for (int i = 0; i < 100; i++) {
+    	for (int i = 0; i < 10; i++) {
     		HelloService helloService = (HelloService) context.getBean("helloService");
     		String result = helloService.hello("World");
     		System.out.println(result);

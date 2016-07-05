@@ -2,7 +2,6 @@ package com.qijiabin.core.client;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.qijiabin.core.common.Refer;
 import com.qijiabin.core.common.RpcRequest;
 import com.qijiabin.core.common.RpcResponse;
 import com.qijiabin.core.proxy.ProxyFactory;
@@ -33,12 +33,14 @@ public class RpcClientProxyFactory implements InitializingBean, FactoryBean<Obje
     private ServiceDiscovery serviceDiscovery;
     private String serialize;
     private Object proxyClient;
+    private String loadbalance;
     private static final ProxyFactory PROXY_FACTORY = new JdkProxyFactory();
 
     
-    public RpcClientProxyFactory(ServiceDiscovery serviceDiscovery, String serialize) {
+    public RpcClientProxyFactory(ServiceDiscovery serviceDiscovery, String serialize, String loadbalance) {
         this.serviceDiscovery = serviceDiscovery;
         this.serialize = serialize;
+        this.loadbalance = loadbalance;
     }
 
 	@Override
@@ -59,14 +61,13 @@ public class RpcClientProxyFactory implements InitializingBean, FactoryBean<Obje
                 	return null;
                 } 
                 
-                InetSocketAddress address = serviceDiscovery.selector();
+                Refer refer = serviceDiscovery.selector(loadbalance);
                 
-                if (address == null) {
+                if (refer == null) {
                 	LOGGER.info(">>>address is null!");
                 	return null;
                 }
-                RpcClientHandler client = new RpcClientHandler(address.getHostName(), address.getPort(), serialize);
-                RpcResponse response = client.send(request);
+                RpcResponse response = new RpcClientHandler().send(refer.getAddress().getHostName(), refer.getAddress().getPort(), serialize, request);
                 
                 if (response.isError()) {
                 	throw response.getError();

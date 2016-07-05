@@ -1,8 +1,5 @@
 package com.qijiabin.core.client;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.qijiabin.core.common.RpcRequest;
 import com.qijiabin.core.common.RpcResponse;
 import com.qijiabin.core.rpc.RpcDecoder;
@@ -31,37 +28,19 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  */
 public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClientHandler.class);
-
-    private String host;
-    private int port;
-    private String serialize;
     private RpcResponse response;
     private final Object obj = new Object();
 
     
-    public RpcClientHandler(String host, int port, String serialize) {
-        this.host = host;
-        this.port = port;
-        this.serialize = serialize;
-    }
-
     @Override
     public void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
         this.response = response;
-
         synchronized (obj) {
             obj.notifyAll();
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOGGER.error(">>>client caught exception", cause);
-        ctx.close();
-    }
-
-    public RpcResponse send(RpcRequest request) throws Exception {
+    public RpcResponse send(String host, int port, final String serialize, RpcRequest request) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -78,9 +57,8 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
                 .option(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture future = bootstrap.connect(host, port).sync();
-            future.channel().writeAndFlush(request).sync();
-
             synchronized (obj) {
+            	future.channel().writeAndFlush(request).sync();
                 obj.wait();
             }
 
